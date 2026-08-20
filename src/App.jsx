@@ -43,7 +43,7 @@ const allCollaborators = [
 
   // Soporte
   { id: 'c_mmonsalve', name: 'Mariangly Monsalve Luque', initials: 'MM', area: 'soporte', role: 'Soporte y Pos Venta', rank: 'standard', email: 'soporte@wit.la', phone: '+56990737619', location: 'Casa Matriz', github: null },
-  { id: 'c_rcontreras', name: 'Raul Eduardo Contreras', initials: 'RC', area: 'soporte', role: 'Jefe Soporte', rank: 'standard', email: 'reca07@gmail.com', phone: '+56967281675', location: 'San Borja', github: null },
+  { id: 'c_rcontreras', name: 'Raul Eduardo Contreras', initials: 'RC', area: 'soporte', role: 'Jefe Soporte', rank: 'lead', email: 'reca07@gmail.com', phone: '+56967281675', location: 'San Borja', github: null },
   { id: 'c_clevipil', name: 'Carolina Andrea Levipil', initials: 'CL', area: 'soporte', role: 'Atención a Clientes', rank: 'standard', email: 'karolina.levipil@icloud.com', phone: '+56978194180', location: 'San Borja', github: null },
   { id: 'c_amorales', name: 'Alexandra Nicole Morales', initials: 'AM', area: 'soporte', role: 'Soporte y Pos Venta', rank: 'standard', email: 'Workale70@gmail.com', phone: '+56930200221', location: 'San Borja', github: null },
   { id: 'c_achevez', name: 'Anggie Katiusca Chevez', initials: 'AC', area: 'soporte', role: 'Soporte y Atención', rank: 'standard', email: 'angiedaniel2809@gmail.com', phone: '+56979352096', location: 'San Borja', github: null },
@@ -262,15 +262,15 @@ const injectStyles = () => {
       100% { border-color: rgba(148, 163, 184, 0.5); box-shadow: 0 0 5px rgba(148, 163, 184, 0.2); }
     }
     .badge-ceo {
-      background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
-      color: white;
+      background: #020617;
+      color: #fbbf24;
       border: 2px solid #fbbf24;
       animation: pulse-halo 2s infinite;
       transform: scale(1.4);
     }
     .badge-gerente {
-      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-      color: #334155;
+      background: #0f172a;
+      color: #f1f5f9;
       border: 2px solid #cbd5e1;
       animation: glow-border 3s infinite;
       transform: scale(1.2);
@@ -311,7 +311,7 @@ function TeamMember({ member, isVisible }) {
 
   if (!isVisible && !meshRef.current) return null;
 
-  let badgeClass = 'text-slate-700 bg-white border border-slate-300';
+  let badgeClass = 'text-slate-700 bg-white/95 border border-slate-300';
   let BadgeIcon = null;
 
   if (member.rank === 'ceo') {
@@ -319,7 +319,7 @@ function TeamMember({ member, isVisible }) {
     BadgeIcon = <Crown size={12} className="absolute -top-3 -right-2 text-amber-500 drop-shadow-md z-10 animate-bounce" />;
   } else if (member.rank === 'gerente') {
     badgeClass = 'badge-gerente shadow-slate-300/50';
-    BadgeIcon = <Award size={10} className="absolute -top-2 -right-1 text-slate-500 drop-shadow-sm z-10" />;
+    BadgeIcon = <Award size={10} className="absolute -top-2 -right-1 text-slate-300 drop-shadow-sm z-10" />;
   } else if (member.rank === 'lead') {
     badgeClass = 'badge-lead shadow-sky-500/30';
     BadgeIcon = <Terminal size={10} className="absolute -top-2 -right-1 text-sky-400 z-10" />;
@@ -328,11 +328,12 @@ function TeamMember({ member, isVisible }) {
   const customBadgeStyle = {};
   if (member.rank === 'standard') {
     customBadgeStyle.borderColor = member.color;
+    customBadgeStyle.color = member.color; // text in area color
     if (hovered) {
       customBadgeStyle.backgroundColor = member.color;
       customBadgeStyle.color = '#fff';
     } else {
-      customBadgeStyle.color = '#334155';
+      customBadgeStyle.backgroundColor = '#f8fafc'; // slate-50
     }
   }
 
@@ -354,17 +355,6 @@ function TeamMember({ member, isVisible }) {
             >
               {member.initials}
             </div>
-            
-            {member.rank === 'ceo' && !hovered && (
-               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow whitespace-nowrap">
-                 CEO
-               </div>
-            )}
-            {member.rank === 'gerente' && !hovered && (
-               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-700 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap">
-                 GERENTE
-               </div>
-            )}
           </div>
 
           {/* Expanded Modal */}
