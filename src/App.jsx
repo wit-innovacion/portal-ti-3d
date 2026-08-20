@@ -2,64 +2,64 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, QuadraticBezierLine, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
-import { Server, Terminal, ShieldCheck, Rocket, ChevronLeft, Code, User, ArrowRight, X, Layers, Briefcase, Users, FileText, CheckCircle, Mail, Phone, MapPin } from 'lucide-react';
+import { Server, Terminal, ShieldCheck, Rocket, ChevronLeft, Code, User, ArrowRight, X, Layers, Briefcase, Users, FileText, CheckCircle, Mail, Phone, MapPin, Crown, Award, Star, Shield, Sparkles } from 'lucide-react';
 
 // --- DATA ---
 const allCollaborators = [
   // Negocios
-  { id: 'c_epaz', name: 'Euro Jose Paz Añez', initials: 'EP', area: 'negocios', role: 'Desarrollo & Estrategia de Negocios', email: 'epaz@wit.la', phone: '+56947518114', location: 'Casa Matriz', github: null },
-  { id: 'c_llara', name: 'Luis Eduardo Lara Villarroel', initials: 'LL', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'llara@wit.la', phone: '+56948104842', location: 'Casa Matriz', github: null },
-  { id: 'c_jtgoicoechea', name: 'José Tomás Goicoechea Nervi', initials: 'JG', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'Jgoicoechea@wit.la', phone: '+56977953840', location: 'Casa Matriz', github: null },
-  { id: 'c_vponce', name: 'Verónica Ponce de León', initials: 'VP', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'vponcedeleon@wit.la', phone: '+56961662249', location: 'Casa Matriz', github: null },
+  { id: 'c_epaz', name: 'Euro Jose Paz Añez', initials: 'EP', area: 'proyectos', role: 'Gerente de PMO / Implementación', rank: 'gerente', email: 'epaz@wit.la', phone: '+56947518114', location: 'Casa Matriz', github: null },
+  { id: 'c_llara', name: 'Luis Eduardo Lara Villarroel', initials: 'LL', area: 'negocios', role: 'Desarrollo & Estrategia', rank: 'standard', email: 'llara@wit.la', phone: '+56948104842', location: 'Casa Matriz', github: null },
+  { id: 'c_jtgoicoechea', name: 'José Tomás Goicoechea Nervi', initials: 'JG', area: 'negocios', role: 'Gerente de Negocios', rank: 'gerente', email: 'Jgoicoechea@wit.la', phone: '+56977953840', location: 'Casa Matriz', github: null },
+  { id: 'c_vponce', name: 'Verónica Ponce de León', initials: 'VP', area: 'negocios', role: 'Desarrollo & Estrategia', rank: 'standard', email: 'vponcedeleon@wit.la', phone: '+56961662249', location: 'Casa Matriz', github: null },
 
   // Admin & Finanzas
-  { id: 'c_agonzalez', name: 'Alejandro Gonzalez Espinosa', initials: 'AG', area: 'admin', role: 'Gerente General / Admin', email: 'alejandrogonzalez@wit.la', phone: '+56942230775', location: 'Estación Central', github: null },
-  { id: 'c_gtejeda', name: 'Jose Gonzalo Fuentes Tejeda', initials: 'GT', area: 'admin', role: 'Gerente Administración', email: 'gonzalotejeda@wit.la', phone: '+56990333346', location: 'Casa Matriz', github: null },
-  { id: 'c_pamarista', name: 'Pablo Efrain José Amarista', initials: 'PA', area: 'admin', role: 'Producción y Manufactura', email: 'pamarista@wit.la', phone: '+56963286119', location: 'Casa Matriz', github: null },
-  { id: 'c_arodriguez', name: 'Alba Yulitza Rodríguez', initials: 'AR', area: 'admin', role: 'Encargada RRHH', email: 'alba.rodriguez@wit.la', phone: '+56947521147', location: 'Casa Matriz', github: null },
-  { id: 'c_lalbarran', name: 'Lixandro Jose Albarran', initials: 'LA', area: 'admin', role: 'Administración & Finanzas', email: 'lalbarran@wit.la', phone: '+56977298122', location: 'Casa Matriz', github: null },
-  { id: 'c_acisterna', name: 'Andrea Cisterna', initials: 'AC', area: 'admin', role: 'Servicios Generales', email: 'andreacisternas7287@gmail.com', phone: '+5691387484', location: 'Casa Matriz', github: null },
-  { id: 'c_ramaya', name: 'Randy Miguel Amaya', initials: 'RA', area: 'admin', role: 'Administración Gráfica', email: 'Grafica@pullman.cl', phone: '+56963230570', location: 'Casa Matriz', github: null },
-  { id: 'c_mcarrasco', name: 'María Isabel Carrasco', initials: 'MC', area: 'admin', role: 'Administración & Gestión', email: 'mcarrasco@wit.la', phone: '+56920010716', location: 'Casa Matriz', github: null },
-  { id: 'c_mgarcia', name: 'Milibeth García Jordan', initials: 'MG', area: 'admin', role: 'Administración & Gestión', email: 'milibethjordan@gmail.com', phone: '+56956367426', location: 'San Borja', github: null },
+  { id: 'c_agonzalez', name: 'Alejandro Gonzalez Espinosa', initials: 'AG', area: 'admin', role: 'Gerente General / CEO', rank: 'ceo', email: 'alejandrogonzalez@wit.la', phone: '+56942230775', location: 'Estación Central', github: null },
+  { id: 'c_gtejeda', name: 'Jose Gonzalo Fuentes Tejeda', initials: 'GT', area: 'admin', role: 'Administración', rank: 'standard', email: 'gonzalotejeda@wit.la', phone: '+56990333346', location: 'Casa Matriz', github: null },
+  { id: 'c_pamarista', name: 'Pablo Efrain José Amarista', initials: 'PA', area: 'admin', role: 'Producción y Manufactura', rank: 'standard', email: 'pamarista@wit.la', phone: '+56963286119', location: 'Casa Matriz', github: null },
+  { id: 'c_arodriguez', name: 'Alba Yulitza Rodríguez', initials: 'AR', area: 'admin', role: 'Gerente de Recursos Humanos', rank: 'gerente', email: 'alba.rodriguez@wit.la', phone: '+56947521147', location: 'Casa Matriz', github: null },
+  { id: 'c_lalbarran', name: 'Lixandro Jose Albarran', initials: 'LA', area: 'admin', role: 'Gerente de Administración', rank: 'gerente', email: 'lalbarran@wit.la', phone: '+56977298122', location: 'Casa Matriz', github: null },
+  { id: 'c_acisterna', name: 'Andrea Cisterna', initials: 'AC', area: 'admin', role: 'Servicios Generales', rank: 'standard', email: 'andreacisternas7287@gmail.com', phone: '+5691387484', location: 'Casa Matriz', github: null },
+  { id: 'c_ramaya', name: 'Randy Miguel Amaya', initials: 'RA', area: 'admin', role: 'Administración Gráfica', rank: 'standard', email: 'Grafica@pullman.cl', phone: '+56963230570', location: 'Casa Matriz', github: null },
+  { id: 'c_mcarrasco', name: 'María Isabel Carrasco', initials: 'MC', area: 'admin', role: 'Administración & Gestión', rank: 'standard', email: 'mcarrasco@wit.la', phone: '+56920010716', location: 'Casa Matriz', github: null },
+  { id: 'c_mgarcia', name: 'Milibeth García Jordan', initials: 'MG', area: 'admin', role: 'Administración & Gestión', rank: 'standard', email: 'milibethjordan@gmail.com', phone: '+56956367426', location: 'San Borja', github: null },
 
-  // Implementación
-  { id: 'c_mjuarez', name: 'Marleen Marielena Juarez', initials: 'MJ', area: 'proyectos', role: 'Implementación & Op', email: 'mjuarez@wit.la', phone: '+56996981505', location: 'Casa Matriz', github: null },
-  { id: 'c_rvargas', name: 'Roberto Gustavo Vargas', initials: 'RV', area: 'proyectos', role: 'Implementación & Op', email: 'rvargas@sertran.cl', phone: '+56987860962', location: 'Casa Matriz', github: null },
-  { id: 'c_rlorca', name: 'Ricardo Andrés Lorca', initials: 'RL', area: 'proyectos', role: 'Implementación', email: 'rlorca@wit.la', phone: '+56927217418', location: 'Casa Matriz', github: null },
-  { id: 'c_hcorredor', name: 'Héctor José Corredor', initials: 'HC', area: 'proyectos', role: 'Implementación', email: 'hejocome2018@gmail.com', phone: '+56979592369', location: 'Casa Matriz', github: null },
-  { id: 'c_calfaro', name: 'Catalina Antonia Alfaro', initials: 'CA', area: 'proyectos', role: 'Implementación', email: 'cat.alfarot@gmail.com', phone: '+56982721892', location: 'Casa Matriz', github: null },
-  { id: 'c_amunoz', name: 'Angel Segundo Muñoz', initials: 'AM', area: 'proyectos', role: 'Soporte en Terreno', email: 'Chicho06as@gmail.com', phone: '+56967315323', location: 'Terreno', github: null },
+  // Implementación / Proyectos
+  { id: 'c_mjuarez', name: 'Marleen Marielena Juarez', initials: 'MJ', area: 'proyectos', role: 'Implementación & Op', rank: 'standard', email: 'mjuarez@wit.la', phone: '+56996981505', location: 'Casa Matriz', github: null },
+  { id: 'c_rvargas', name: 'Roberto Gustavo Vargas', initials: 'RV', area: 'proyectos', role: 'Implementación & Op', rank: 'standard', email: 'rvargas@sertran.cl', phone: '+56987860962', location: 'Casa Matriz', github: null },
+  { id: 'c_rlorca', name: 'Ricardo Andrés Lorca', initials: 'RL', area: 'proyectos', role: 'Implementación', rank: 'standard', email: 'rlorca@wit.la', phone: '+56927217418', location: 'Casa Matriz', github: null },
+  { id: 'c_hcorredor', name: 'Héctor José Corredor', initials: 'HC', area: 'proyectos', role: 'Implementación', rank: 'standard', email: 'hejocome2018@gmail.com', phone: '+56979592369', location: 'Casa Matriz', github: null },
+  { id: 'c_calfaro', name: 'Catalina Antonia Alfaro', initials: 'CA', area: 'proyectos', role: 'Implementación', rank: 'standard', email: 'cat.alfarot@gmail.com', phone: '+56982721892', location: 'Casa Matriz', github: null },
+  { id: 'c_amunoz', name: 'Angel Segundo Muñoz', initials: 'AM', area: 'proyectos', role: 'Soporte en Terreno', rank: 'standard', email: 'Chicho06as@gmail.com', phone: '+56967315323', location: 'Terreno', github: null },
 
   // Diseño
-  { id: 'c_atejeda', name: 'Alvaro Daniel Tejeda', initials: 'AT', area: 'diseno', role: 'Líder Diseño y Comunicación', email: 'tejedareyes@gmail.com', phone: '+56977107308', location: 'Casa Matriz', github: null },
+  { id: 'c_aville', name: 'Alejandro Alvaro Villé', initials: 'AV', area: 'diseno', role: 'Gerente de Diseño', rank: 'gerente', email: 'aville@wit.la', phone: '+56932917135', location: 'Casa Matriz', github: null },
+  { id: 'c_atejeda', name: 'Alvaro Daniel Tejeda', initials: 'AT', area: 'diseno', role: 'Diseño y Comunicación', rank: 'standard', email: 'tejedareyes@gmail.com', phone: '+56977107308', location: 'Casa Matriz', github: null },
+  { id: 'c_juribes', name: 'Julyt Ajelet Sahar Uribes', initials: 'JU', area: 'diseno', role: 'Diseño UI/UX', rank: 'standard', email: 'juribes@wit.la', phone: '+56935143479', location: 'Casa Matriz', github: null },
+  { id: 'c_dmeza', name: 'Dominique Melissa Meza', initials: 'DM', area: 'diseno', role: 'Diseño Frontend / UI', rank: 'standard', email: 'Domi.meza@duocuc.cl', phone: '+56945884822', location: 'San Borja', github: null },
+  { id: 'c_aerices', name: 'Ayelem Antonella Erices', initials: 'AE', area: 'diseno', role: 'Diseño Gráfico / UI', rank: 'standard', email: 'Ericesayelem71@gmail.com', phone: '+56941739810', location: 'San Borja', github: null },
 
   // I+D
-  { id: 'c_dwigodski', name: 'Diego Wigodski Carafí', initials: 'DW', area: 'id', role: 'Líder I+D', email: 'dwigodski@wit.la', phone: '+56981914052', location: 'Casa Matriz', github: 'diegowigo' },
-  { id: 'c_jsandoval', name: 'Jesus Orlando Sandoval', initials: 'JS', area: 'id', role: 'Investigación & Desarrollo', email: 'sandoval.jesus2005@gmail.com', phone: '+56981226760', location: 'Casa Matriz', github: null },
+  { id: 'c_jsandoval', name: 'Jesus Orlando Sandoval', initials: 'JS', area: 'id', role: 'Investigación & Desarrollo', rank: 'standard', email: 'sandoval.jesus2005@gmail.com', phone: '+56981226760', location: 'Casa Matriz', github: null },
 
   // Soporte
-  { id: 'c_mmonsalve', name: 'Mariangly Monsalve Luque', initials: 'MM', area: 'soporte', role: 'Soporte y Pos Venta', email: 'soporte@wit.la', phone: '+56990737619', location: 'Casa Matriz', github: null },
-  { id: 'c_rcontreras', name: 'Raul Eduardo Contreras', initials: 'RC', area: 'soporte', role: 'Jefe Soporte', email: 'reca07@gmail.com', phone: '+56967281675', location: 'San Borja', github: null },
-  { id: 'c_clevipil', name: 'Carolina Andrea Levipil', initials: 'CL', area: 'soporte', role: 'Atención a Clientes', email: 'karolina.levipil@icloud.com', phone: '+56978194180', location: 'San Borja', github: null },
-  { id: 'c_amorales', name: 'Alexandra Nicole Morales', initials: 'AM', area: 'soporte', role: 'Soporte y Pos Venta', email: 'Workale70@gmail.com', phone: '+56930200221', location: 'San Borja', github: null },
-  { id: 'c_achevez', name: 'Anggie Katiusca Chevez', initials: 'AC', area: 'soporte', role: 'Soporte y Atención', email: 'angiedaniel2809@gmail.com', phone: '+56979352096', location: 'San Borja', github: null },
-  { id: 'c_iflores', name: 'Ignacia Anabel Flores', initials: 'IF', area: 'soporte', role: 'Soporte y Pos Venta', email: 'ignaciaflores2001@gmail.com', phone: '+56963101152', location: 'San Borja', github: null },
-  { id: 'c_avidal', name: 'Amanda Ignacia Vidal', initials: 'AV', area: 'soporte', role: 'Soporte y Atención', email: 'mandiv322@gmail.com', phone: '+56945526476', location: 'San Borja', github: null },
-  { id: 'c_myaraure', name: 'Mariangeles Jesús Yaraure', initials: 'MY', area: 'soporte', role: 'Atención al Cliente', email: 'myaraure@wit.la', phone: '+56993798851', location: 'Casa Matriz', github: null },
-  { id: 'c_mlima', name: 'Mariana Lima Santander', initials: 'ML', area: 'soporte', role: 'Atención al Cliente', email: 'mlima@wit.la', phone: '+56964111962', location: 'Casa Matriz', github: null },
+  { id: 'c_mmonsalve', name: 'Mariangly Monsalve Luque', initials: 'MM', area: 'soporte', role: 'Soporte y Pos Venta', rank: 'standard', email: 'soporte@wit.la', phone: '+56990737619', location: 'Casa Matriz', github: null },
+  { id: 'c_rcontreras', name: 'Raul Eduardo Contreras', initials: 'RC', area: 'soporte', role: 'Jefe Soporte', rank: 'standard', email: 'reca07@gmail.com', phone: '+56967281675', location: 'San Borja', github: null },
+  { id: 'c_clevipil', name: 'Carolina Andrea Levipil', initials: 'CL', area: 'soporte', role: 'Atención a Clientes', rank: 'standard', email: 'karolina.levipil@icloud.com', phone: '+56978194180', location: 'San Borja', github: null },
+  { id: 'c_amorales', name: 'Alexandra Nicole Morales', initials: 'AM', area: 'soporte', role: 'Soporte y Pos Venta', rank: 'standard', email: 'Workale70@gmail.com', phone: '+56930200221', location: 'San Borja', github: null },
+  { id: 'c_achevez', name: 'Anggie Katiusca Chevez', initials: 'AC', area: 'soporte', role: 'Soporte y Atención', rank: 'standard', email: 'angiedaniel2809@gmail.com', phone: '+56979352096', location: 'San Borja', github: null },
+  { id: 'c_iflores', name: 'Ignacia Anabel Flores', initials: 'IF', area: 'soporte', role: 'Soporte y Pos Venta', rank: 'standard', email: 'ignaciaflores2001@gmail.com', phone: '+56963101152', location: 'San Borja', github: null },
+  { id: 'c_avidal', name: 'Amanda Ignacia Vidal', initials: 'AV', area: 'soporte', role: 'Soporte y Atención', rank: 'standard', email: 'mandiv322@gmail.com', phone: '+56945526476', location: 'San Borja', github: null },
+  { id: 'c_myaraure', name: 'Mariangeles Jesús Yaraure', initials: 'MY', area: 'soporte', role: 'Atención al Cliente', rank: 'standard', email: 'myaraure@wit.la', phone: '+56993798851', location: 'Casa Matriz', github: null },
+  { id: 'c_mlima', name: 'Mariana Lima Santander', initials: 'ML', area: 'soporte', role: 'Atención al Cliente', rank: 'standard', email: 'mlima@wit.la', phone: '+56964111962', location: 'Casa Matriz', github: null },
 
-  // TI
-  { id: 'c_ivalenzuela', name: 'Iván Andrés Valenzuela', initials: 'IV', area: 'ti', role: 'Gerente TI', email: 'ivalenzuela@wit.la', phone: '+56942858102', location: 'Casa Matriz', github: 'ivan-valenzuela' },
-  { id: 'c_dgonzalez', name: 'Dorian Cesar Gonzalez', initials: 'DG', area: 'ti', role: 'Jefe Tecnología', email: 'dgonzalez@wit.la', phone: '+56950906625', location: 'Casa Matriz', github: 'dorian-cesar' },
-  { id: 'c_dfarias', name: 'Diego Farias', initials: 'DF', area: 'ti', role: 'Ingeniero DevOps', email: 'dfarias@wit.la', phone: '+56988888888', location: 'Casa Matriz', github: 'D1Farias' },
-  { id: 'c_lsanchez', name: 'Luis Omar Sanchez Diaz', initials: 'LS', area: 'ti', role: 'Desarrollo Backend', email: 'hlcxpl@gmail.com', phone: '+56986683369', location: 'San Borja', github: 'HLCXPL' },
-  { id: 'c_lmendez', name: 'Luis Aroldo Mendez', initials: 'LM', area: 'ti', role: 'Tecnología & Redes', email: 'lmendez@sertran.cl', phone: '+56982300640', location: 'Casa Matriz', github: null },
-  { id: 'c_rvaldebenito', name: 'Rodrigo Alejandro Valdebenito', initials: 'RV', area: 'ti', role: 'Tecnología & Sistemas', email: 'rvalde@pullman.cl', phone: '+56984645310', location: 'Casa Matriz', github: null },
-  { id: 'c_aville', name: 'Alejandro Alvaro Villé', initials: 'AV', area: 'ti', role: 'Comunicaciones', email: 'aville@wit.la', phone: '+56932917135', location: 'Casa Matriz', github: null },
-  { id: 'c_dmeza', name: 'Dominique Melissa Meza', initials: 'DM', area: 'ti', role: 'Desarrollo TI', email: 'Domi.meza@duocuc.cl', phone: '+56945884822', location: 'San Borja', github: null },
-  { id: 'c_juribes', name: 'Julyt Ajelet Sahar Uribes', initials: 'JU', area: 'ti', role: 'Tecnología & Sistemas', email: 'juribes@wit.la', phone: '+56935143479', location: 'Casa Matriz', github: null },
-  { id: 'c_aerices', name: 'Ayelem Antonella Erices', initials: 'AE', area: 'ti', role: 'Tecnología TI', email: 'Ericesayelem71@gmail.com', phone: '+56941739810', location: 'San Borja', github: null },
+  // TI (Core)
+  { id: 'c_ivalenzuela', name: 'Iván Andrés Valenzuela', initials: 'IV', area: 'ti', role: 'Gerente de Tecnología', rank: 'gerente', email: 'ivalenzuela@wit.la', phone: '+56942858102', location: 'Casa Matriz', github: 'ivan-valenzuela' },
+  { id: 'c_dgonzalez', name: 'Dorian Cesar Gonzalez', initials: 'DG', area: 'ti', role: 'Jefe Tecnología / Arquitectura', rank: 'lead', email: 'dgonzalez@wit.la', phone: '+56950906625', location: 'Casa Matriz', github: 'dorian-cesar' },
+  { id: 'c_dwigodski', name: 'Diego Wigodski Carafí', initials: 'DW', area: 'ti', role: 'Investigación & Desarrollo', rank: 'lead', email: 'dwigodski@wit.la', phone: '+56981914052', location: 'Casa Matriz', github: 'diegowigo' },
+  { id: 'c_dfarias', name: 'Diego Farias', initials: 'DF', area: 'ti', role: 'Ingeniero DevOps & CI/CD', rank: 'lead', email: 'dfarias@wit.la', phone: '+56988888888', location: 'Casa Matriz', github: 'D1Farias' },
+  { id: 'c_lsanchez', name: 'Luis Omar Sanchez Diaz', initials: 'LS', area: 'ti', role: 'Desarrollo Backend & Infraestructura', rank: 'lead', email: 'hlcxpl@gmail.com', phone: '+56986683369', location: 'San Borja', github: 'HLCXPL' },
+  { id: 'c_lmendez', name: 'Luis Aroldo Mendez', initials: 'LM', area: 'ti', role: 'Tecnología & Redes', rank: 'standard', email: 'lmendez@sertran.cl', phone: '+56982300640', location: 'Casa Matriz', github: null },
+  { id: 'c_rvaldebenito', name: 'Rodrigo Alejandro Valdebenito', initials: 'RV', area: 'ti', role: 'Tecnología & Sistemas', rank: 'standard', email: 'rvalde@pullman.cl', phone: '+56984645310', location: 'Casa Matriz', github: null },
 ];
 
 const areasData = [
@@ -198,12 +198,21 @@ const areasData = [
           { id: 'th2', label: 'War Room', details: 'Gestión de incidente.', roles: 'Infra, Dev', io: 'Out: Hotfix' },
           { id: 'th3', label: 'RCA', details: 'Despliegue y RCA.', roles: 'DevOps', io: 'Out: RCA' },
         ]
+      },
+      {
+        id: 'p_ti_bi',
+        name: 'Business Intelligence',
+        nodes: [
+          { id: 'b1', label: 'Extracción (ETL)', details: 'Extracción, Transformación y Carga de datos crudos.', roles: 'Data Engineer', io: 'In: BDs Crudas' },
+          { id: 'b2', label: 'Data Marts', details: 'Estructuración en modelos dimensionales analíticos.', roles: 'Data Architect', io: 'Out: Data Marts' },
+          { id: 'b3', label: 'Dashboards', details: 'Construcción y publicación de tableros de BI.', roles: 'Data Analyst', io: 'Out: Dashboard' },
+        ]
       }
     ]
   },
 ];
 
-// Calculate deterministic orbits for all collaborators
+// Combine all collaborators into teamOrbiters with calculated orbits
 const teamOrbiters = allCollaborators.map((c) => {
   const targetArea = areasData.find(a => a.id === c.area);
   const areaCollaborators = allCollaborators.filter(col => col.area === c.area);
@@ -211,9 +220,9 @@ const teamOrbiters = allCollaborators.map((c) => {
   const total = areaCollaborators.length;
   
   const initialAngle = (idx / total) * Math.PI * 2;
-  const radius = 1.0 + (idx % 4) * 0.45;
-  const speed = 0.15 + (idx % 3) * 0.1;
-  const yOffset = Math.sin((idx / total) * Math.PI * 2) * 1.5;
+  const radius = c.rank === 'ceo' ? 0.8 : (c.rank === 'gerente' ? 1.5 : (1.8 + (idx % 4) * 0.45));
+  const speed = c.rank === 'ceo' ? 0.05 : (c.rank === 'gerente' ? 0.1 : (0.15 + (idx % 3) * 0.1));
+  const yOffset = c.rank === 'ceo' ? 2 : (c.rank === 'gerente' ? 1.5 : Math.sin((idx / total) * Math.PI * 2) * 1.5);
 
   return {
     ...c,
@@ -235,11 +244,56 @@ const macroConnections = [
   { start: 'admin', end: 'proyectos', control: [2, 1.5, 0] },
 ];
 
+// --- STYLED GLOBALS ---
+const injectStyles = () => {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById('badge-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'badge-styles';
+  style.innerHTML = `
+    @keyframes pulse-halo {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
+      70% { box-shadow: 0 0 0 15px rgba(245, 158, 11, 0); transform: scale(1.05); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
+    }
+    @keyframes glow-border {
+      0% { border-color: rgba(148, 163, 184, 0.5); box-shadow: 0 0 5px rgba(148, 163, 184, 0.2); }
+      50% { border-color: rgba(148, 163, 184, 1); box-shadow: 0 0 15px rgba(148, 163, 184, 0.8); }
+      100% { border-color: rgba(148, 163, 184, 0.5); box-shadow: 0 0 5px rgba(148, 163, 184, 0.2); }
+    }
+    .badge-ceo {
+      background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+      color: white;
+      border: 2px solid #fbbf24;
+      animation: pulse-halo 2s infinite;
+      transform: scale(1.4);
+    }
+    .badge-gerente {
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+      color: #334155;
+      border: 2px solid #cbd5e1;
+      animation: glow-border 3s infinite;
+      transform: scale(1.2);
+    }
+    .badge-lead {
+      background: #1e293b;
+      color: #38bdf8;
+      border: 1px solid #38bdf8;
+      transform: scale(1.1);
+    }
+  `;
+  document.head.appendChild(style);
+};
+
 // --- COMPONENTS ---
 function TeamMember({ member, isVisible }) {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
   const target = areasData.find(n => n.id === member.targetNode);
+
+  useEffect(() => {
+    injectStyles();
+  }, []);
 
   useFrame((state) => {
     if (!isVisible) return;
@@ -247,7 +301,8 @@ function TeamMember({ member, isVisible }) {
       const time = (state.clock.elapsedTime * member.speed) + member.initialAngle;
       const x = target.position[0] + Math.cos(time) * member.orbitRadius;
       const z = target.position[2] + Math.sin(time) * member.orbitRadius;
-      const y = target.position[1] + member.yOffset + Math.sin(state.clock.elapsedTime * 1.5 + member.initialAngle) * 0.2;
+      const floatAmp = member.rank === 'ceo' ? 0.3 : (member.rank === 'gerente' ? 0.2 : 0.2);
+      const y = target.position[1] + member.yOffset + Math.sin(state.clock.elapsedTime * 1.5 + member.initialAngle) * floatAmp;
       
       meshRef.current.position.lerp(new THREE.Vector3(x, y, z), 0.1);
       meshRef.current.quaternion.copy(state.camera.quaternion);
@@ -256,36 +311,84 @@ function TeamMember({ member, isVisible }) {
 
   if (!isVisible && !meshRef.current) return null;
 
+  let badgeClass = 'text-slate-700 bg-white border border-slate-300';
+  let BadgeIcon = null;
+
+  if (member.rank === 'ceo') {
+    badgeClass = 'badge-ceo shadow-amber-500/50';
+    BadgeIcon = <Crown size={12} className="absolute -top-3 -right-2 text-amber-500 drop-shadow-md z-10 animate-bounce" />;
+  } else if (member.rank === 'gerente') {
+    badgeClass = 'badge-gerente shadow-slate-300/50';
+    BadgeIcon = <Award size={10} className="absolute -top-2 -right-1 text-slate-500 drop-shadow-sm z-10" />;
+  } else if (member.rank === 'lead') {
+    badgeClass = 'badge-lead shadow-sky-500/30';
+    BadgeIcon = <Terminal size={10} className="absolute -top-2 -right-1 text-sky-400 z-10" />;
+  }
+
+  const customBadgeStyle = {};
+  if (member.rank === 'standard') {
+    customBadgeStyle.borderColor = member.color;
+    if (hovered) {
+      customBadgeStyle.backgroundColor = member.color;
+      customBadgeStyle.color = '#fff';
+    } else {
+      customBadgeStyle.color = '#334155';
+    }
+  }
+
   return (
     <group ref={meshRef}>
       <Html position={[0, 0, 0]} center style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s', pointerEvents: isVisible ? 'auto' : 'none', zIndex: hovered ? 100 : 1 }}>
         <div 
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className={`relative group cursor-pointer`}
+          className={`relative group cursor-pointer flex items-center justify-center`}
         >
-          {/* Avatar Badge */}
-          <div 
-            className={`w-7 h-7 rounded-full shadow-md flex items-center justify-center font-bold text-[10px] transition-all duration-300 border 
-              ${hovered ? 'scale-125 text-white shadow-xl' : 'text-slate-700 hover:scale-110'}`}
-            style={{ 
-              backgroundColor: hovered ? member.color : '#ffffff',
-              borderColor: member.color 
-            }}
-          >
-            {member.initials}
+          {/* Avatar Badge Container */}
+          <div className="relative">
+            {BadgeIcon}
+            <div 
+              className={`w-7 h-7 rounded-full shadow-md flex items-center justify-center font-extrabold text-[10px] transition-all duration-300 
+                ${badgeClass} ${hovered && member.rank === 'standard' ? 'scale-125 shadow-xl' : 'hover:scale-110'}`}
+              style={customBadgeStyle}
+            >
+              {member.initials}
+            </div>
+            
+            {member.rank === 'ceo' && !hovered && (
+               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+                 CEO
+               </div>
+            )}
+            {member.rank === 'gerente' && !hovered && (
+               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-700 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap">
+                 GERENTE
+               </div>
+            )}
           </div>
 
           {/* Expanded Modal */}
           {hovered && (
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-64 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-2xl p-4 animate-fade-in pointer-events-none">
-              <div className="flex items-start gap-3 border-b border-slate-100 pb-3 mb-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-inner" style={{ backgroundColor: member.color }}>
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-64 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-2xl p-4 animate-fade-in pointer-events-none">
+              <div className="flex items-start gap-3 border-b border-slate-100 pb-3 mb-3 relative">
+                
+                {member.rank === 'ceo' && <Sparkles size={24} className="absolute top-0 right-0 text-amber-400 opacity-20" />}
+                
+                <div 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0 shadow-inner
+                    ${member.rank === 'ceo' ? 'badge-ceo' : member.rank === 'gerente' ? 'badge-gerente' : member.rank === 'lead' ? 'badge-lead' : 'text-white'}`} 
+                  style={member.rank === 'standard' ? { backgroundColor: member.color } : {}}
+                >
                   {member.initials}
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-sm leading-tight">{member.name}</h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1" style={{ color: member.color }}>{member.role}</p>
+                  <h3 className="font-bold text-slate-800 text-sm leading-tight flex items-center gap-1">
+                    {member.name} 
+                    {member.rank === 'ceo' && <Crown size={12} className="text-amber-500" />}
+                  </h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1" style={{ color: member.color }}>
+                    {member.role}
+                  </p>
                 </div>
               </div>
               
@@ -468,6 +571,11 @@ export default function App() {
 
   const currentProcess = selectedArea?.processes[activeProcessIdx];
 
+  // Organize users for the sidebar
+  const getSidebarUsers = (areaId) => {
+    return allCollaborators.filter(c => c.area === areaId);
+  };
+
   return (
     <div className="w-full h-full relative bg-slate-50 flex overflow-hidden">
       
@@ -481,6 +589,7 @@ export default function App() {
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {areasData.map((area) => {
             const isSelected = selectedArea?.id === area.id;
+            const areaUsers = getSidebarUsers(area.id);
             return (
               <div key={area.id} className="mb-2">
                 <button
@@ -494,6 +603,30 @@ export default function App() {
                   </div>
                   {isSelected ? <ChevronLeft size={16} className="text-slate-400" /> : <ArrowRight size={16} className="text-slate-300" />}
                 </button>
+                
+                {/* Expandable People List in Sidebar */}
+                <div 
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${isSelected ? 'max-h-[800px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
+                >
+                  <div className="bg-slate-50/50 border border-slate-100 rounded-lg p-3 mx-2 shadow-inner">
+                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-2 px-1 tracking-widest flex items-center gap-1">
+                      <Users size={10} /> Integrantes del Equipo
+                    </p>
+                    <div className="space-y-0.5">
+                      {areaUsers.map((person, idx) => (
+                        <div key={idx} className="flex items-center gap-2 px-2 py-1.5 hover:bg-white rounded-md transition-colors text-xs font-medium text-slate-600 shadow-sm border border-transparent hover:border-slate-100">
+                          {person.rank === 'ceo' ? <Crown size={12} className="text-amber-500" /> :
+                           person.rank === 'gerente' ? <Award size={12} className="text-slate-500" /> :
+                           person.rank === 'lead' ? <Terminal size={12} className="text-sky-500" /> :
+                           <User size={12} className="text-slate-400" />}
+                          <span className="truncate" title={`${person.name} - ${person.role}`}>
+                            {person.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -504,13 +637,13 @@ export default function App() {
       <div className="flex-1 relative">
         <div className="absolute top-8 left-8 z-10 pointer-events-none">
           <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Directorio y Procesos</h2>
-          <p className="text-slate-600 mt-1 font-medium bg-white/50 backdrop-blur px-3 py-1 rounded-full inline-block border border-white/50">
-            {selectedArea ? `${selectedArea.name} > ${currentProcess?.name}` : 'Vista Global: Pase el cursor sobre las iniciales para ver el perfil.'}
+          <p className="text-slate-600 mt-1 font-medium bg-white/50 backdrop-blur px-3 py-1 rounded-full inline-block border border-white/50 shadow-sm">
+            {selectedArea ? `${selectedArea.name} > ${currentProcess?.name}` : 'Vista Global: Pase el cursor sobre los avatares para ver el perfil.'}
           </p>
         </div>
 
         {/* Process Tabs */}
-        {selectedArea && selectedArea.processes.length > 1 && (
+        {selectedArea && selectedArea.processes && selectedArea.processes.length > 1 && (
           <div className="absolute top-8 left-1/2 -translate-x-1/2 z-10 flex gap-2 bg-white/80 backdrop-blur p-2 rounded-xl shadow-md border border-slate-200">
             {selectedArea.processes.map((proc, idx) => (
               <button
@@ -533,6 +666,15 @@ export default function App() {
           </button>
         )}
 
+        {/* INSTRUCTIONS OVERLAY */}
+        {selectedArea && (
+           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none bg-white/90 backdrop-blur px-6 py-3 rounded-2xl shadow-xl border border-slate-200 animate-fade-in text-center">
+             <p className="text-sm text-slate-800 font-bold">
+               🖱️ Haga clic en los nodos esféricos para ver los detalles del paso.
+             </p>
+           </div>
+        )}
+
         <Canvas camera={{ position: [0, 0, 16], fov: 45 }}>
           <color attach="background" args={['#f8fafc']} />
           <ambientLight intensity={0.7} />
@@ -550,7 +692,8 @@ export default function App() {
                 color={node.color}
                 label={node.name}
                 isVisible={!selectedArea}
-                hoverable={false}
+                hoverable={true}
+                onClick={() => handleAreaSelect(node)}
               />
             ))}
             {teamOrbiters.map((member) => (
@@ -559,7 +702,7 @@ export default function App() {
           </group>
 
           {/* MICRO / PROCESS FLOW VIEW */}
-          {selectedArea && (
+          {selectedArea && currentProcess && (
             <ProcessFlow 
               process={currentProcess} 
               color={selectedArea.color} 
@@ -576,7 +719,7 @@ export default function App() {
             minPolarAngle={Math.PI / 4} 
             maxPolarAngle={Math.PI / 1.5}
             minDistance={8}
-            maxDistance={25}
+            maxDistance={35}
           />
         </Canvas>
       </div>
