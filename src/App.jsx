@@ -2,83 +2,140 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Html, QuadraticBezierLine, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
-import { Server, Terminal, ShieldCheck, Rocket, ChevronLeft, Code, User, ArrowRight, X, Layers, Briefcase, Users, FileText, CheckCircle } from 'lucide-react';
+import { Server, Terminal, ShieldCheck, Rocket, ChevronLeft, Code, User, ArrowRight, X, Layers, Briefcase, Users, FileText, CheckCircle, Mail, Phone, MapPin } from 'lucide-react';
 
 // --- DATA ---
+const allCollaborators = [
+  // Negocios
+  { id: 'c_epaz', name: 'Euro Jose Paz Añez', initials: 'EP', area: 'negocios', role: 'Desarrollo & Estrategia de Negocios', email: 'epaz@wit.la', phone: '+56947518114', location: 'Casa Matriz', github: null },
+  { id: 'c_llara', name: 'Luis Eduardo Lara Villarroel', initials: 'LL', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'llara@wit.la', phone: '+56948104842', location: 'Casa Matriz', github: null },
+  { id: 'c_jtgoicoechea', name: 'José Tomás Goicoechea Nervi', initials: 'JG', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'Jgoicoechea@wit.la', phone: '+56977953840', location: 'Casa Matriz', github: null },
+  { id: 'c_vponce', name: 'Verónica Ponce de León', initials: 'VP', area: 'negocios', role: 'Desarrollo & Estrategia', email: 'vponcedeleon@wit.la', phone: '+56961662249', location: 'Casa Matriz', github: null },
+
+  // Admin & Finanzas
+  { id: 'c_agonzalez', name: 'Alejandro Gonzalez Espinosa', initials: 'AG', area: 'admin', role: 'Gerente General / Admin', email: 'alejandrogonzalez@wit.la', phone: '+56942230775', location: 'Estación Central', github: null },
+  { id: 'c_gtejeda', name: 'Jose Gonzalo Fuentes Tejeda', initials: 'GT', area: 'admin', role: 'Gerente Administración', email: 'gonzalotejeda@wit.la', phone: '+56990333346', location: 'Casa Matriz', github: null },
+  { id: 'c_pamarista', name: 'Pablo Efrain José Amarista', initials: 'PA', area: 'admin', role: 'Producción y Manufactura', email: 'pamarista@wit.la', phone: '+56963286119', location: 'Casa Matriz', github: null },
+  { id: 'c_arodriguez', name: 'Alba Yulitza Rodríguez', initials: 'AR', area: 'admin', role: 'Encargada RRHH', email: 'alba.rodriguez@wit.la', phone: '+56947521147', location: 'Casa Matriz', github: null },
+  { id: 'c_lalbarran', name: 'Lixandro Jose Albarran', initials: 'LA', area: 'admin', role: 'Administración & Finanzas', email: 'lalbarran@wit.la', phone: '+56977298122', location: 'Casa Matriz', github: null },
+  { id: 'c_acisterna', name: 'Andrea Cisterna', initials: 'AC', area: 'admin', role: 'Servicios Generales', email: 'andreacisternas7287@gmail.com', phone: '+5691387484', location: 'Casa Matriz', github: null },
+  { id: 'c_ramaya', name: 'Randy Miguel Amaya', initials: 'RA', area: 'admin', role: 'Administración Gráfica', email: 'Grafica@pullman.cl', phone: '+56963230570', location: 'Casa Matriz', github: null },
+  { id: 'c_mcarrasco', name: 'María Isabel Carrasco', initials: 'MC', area: 'admin', role: 'Administración & Gestión', email: 'mcarrasco@wit.la', phone: '+56920010716', location: 'Casa Matriz', github: null },
+  { id: 'c_mgarcia', name: 'Milibeth García Jordan', initials: 'MG', area: 'admin', role: 'Administración & Gestión', email: 'milibethjordan@gmail.com', phone: '+56956367426', location: 'San Borja', github: null },
+
+  // Implementación
+  { id: 'c_mjuarez', name: 'Marleen Marielena Juarez', initials: 'MJ', area: 'proyectos', role: 'Implementación & Op', email: 'mjuarez@wit.la', phone: '+56996981505', location: 'Casa Matriz', github: null },
+  { id: 'c_rvargas', name: 'Roberto Gustavo Vargas', initials: 'RV', area: 'proyectos', role: 'Implementación & Op', email: 'rvargas@sertran.cl', phone: '+56987860962', location: 'Casa Matriz', github: null },
+  { id: 'c_rlorca', name: 'Ricardo Andrés Lorca', initials: 'RL', area: 'proyectos', role: 'Implementación', email: 'rlorca@wit.la', phone: '+56927217418', location: 'Casa Matriz', github: null },
+  { id: 'c_hcorredor', name: 'Héctor José Corredor', initials: 'HC', area: 'proyectos', role: 'Implementación', email: 'hejocome2018@gmail.com', phone: '+56979592369', location: 'Casa Matriz', github: null },
+  { id: 'c_calfaro', name: 'Catalina Antonia Alfaro', initials: 'CA', area: 'proyectos', role: 'Implementación', email: 'cat.alfarot@gmail.com', phone: '+56982721892', location: 'Casa Matriz', github: null },
+  { id: 'c_amunoz', name: 'Angel Segundo Muñoz', initials: 'AM', area: 'proyectos', role: 'Soporte en Terreno', email: 'Chicho06as@gmail.com', phone: '+56967315323', location: 'Terreno', github: null },
+
+  // Diseño
+  { id: 'c_atejeda', name: 'Alvaro Daniel Tejeda', initials: 'AT', area: 'diseno', role: 'Líder Diseño y Comunicación', email: 'tejedareyes@gmail.com', phone: '+56977107308', location: 'Casa Matriz', github: null },
+
+  // I+D
+  { id: 'c_dwigodski', name: 'Diego Wigodski Carafí', initials: 'DW', area: 'id', role: 'Líder I+D', email: 'dwigodski@wit.la', phone: '+56981914052', location: 'Casa Matriz', github: 'diegowigo' },
+  { id: 'c_jsandoval', name: 'Jesus Orlando Sandoval', initials: 'JS', area: 'id', role: 'Investigación & Desarrollo', email: 'sandoval.jesus2005@gmail.com', phone: '+56981226760', location: 'Casa Matriz', github: null },
+
+  // Soporte
+  { id: 'c_mmonsalve', name: 'Mariangly Monsalve Luque', initials: 'MM', area: 'soporte', role: 'Soporte y Pos Venta', email: 'soporte@wit.la', phone: '+56990737619', location: 'Casa Matriz', github: null },
+  { id: 'c_rcontreras', name: 'Raul Eduardo Contreras', initials: 'RC', area: 'soporte', role: 'Jefe Soporte', email: 'reca07@gmail.com', phone: '+56967281675', location: 'San Borja', github: null },
+  { id: 'c_clevipil', name: 'Carolina Andrea Levipil', initials: 'CL', area: 'soporte', role: 'Atención a Clientes', email: 'karolina.levipil@icloud.com', phone: '+56978194180', location: 'San Borja', github: null },
+  { id: 'c_amorales', name: 'Alexandra Nicole Morales', initials: 'AM', area: 'soporte', role: 'Soporte y Pos Venta', email: 'Workale70@gmail.com', phone: '+56930200221', location: 'San Borja', github: null },
+  { id: 'c_achevez', name: 'Anggie Katiusca Chevez', initials: 'AC', area: 'soporte', role: 'Soporte y Atención', email: 'angiedaniel2809@gmail.com', phone: '+56979352096', location: 'San Borja', github: null },
+  { id: 'c_iflores', name: 'Ignacia Anabel Flores', initials: 'IF', area: 'soporte', role: 'Soporte y Pos Venta', email: 'ignaciaflores2001@gmail.com', phone: '+56963101152', location: 'San Borja', github: null },
+  { id: 'c_avidal', name: 'Amanda Ignacia Vidal', initials: 'AV', area: 'soporte', role: 'Soporte y Atención', email: 'mandiv322@gmail.com', phone: '+56945526476', location: 'San Borja', github: null },
+  { id: 'c_myaraure', name: 'Mariangeles Jesús Yaraure', initials: 'MY', area: 'soporte', role: 'Atención al Cliente', email: 'myaraure@wit.la', phone: '+56993798851', location: 'Casa Matriz', github: null },
+  { id: 'c_mlima', name: 'Mariana Lima Santander', initials: 'ML', area: 'soporte', role: 'Atención al Cliente', email: 'mlima@wit.la', phone: '+56964111962', location: 'Casa Matriz', github: null },
+
+  // TI
+  { id: 'c_ivalenzuela', name: 'Iván Andrés Valenzuela', initials: 'IV', area: 'ti', role: 'Gerente TI', email: 'ivalenzuela@wit.la', phone: '+56942858102', location: 'Casa Matriz', github: 'ivan-valenzuela' },
+  { id: 'c_dgonzalez', name: 'Dorian Cesar Gonzalez', initials: 'DG', area: 'ti', role: 'Jefe Tecnología', email: 'dgonzalez@wit.la', phone: '+56950906625', location: 'Casa Matriz', github: 'dorian-cesar' },
+  { id: 'c_dfarias', name: 'Diego Farias', initials: 'DF', area: 'ti', role: 'Ingeniero DevOps', email: 'dfarias@wit.la', phone: '+56988888888', location: 'Casa Matriz', github: 'D1Farias' },
+  { id: 'c_lsanchez', name: 'Luis Omar Sanchez Diaz', initials: 'LS', area: 'ti', role: 'Desarrollo Backend', email: 'hlcxpl@gmail.com', phone: '+56986683369', location: 'San Borja', github: 'HLCXPL' },
+  { id: 'c_lmendez', name: 'Luis Aroldo Mendez', initials: 'LM', area: 'ti', role: 'Tecnología & Redes', email: 'lmendez@sertran.cl', phone: '+56982300640', location: 'Casa Matriz', github: null },
+  { id: 'c_rvaldebenito', name: 'Rodrigo Alejandro Valdebenito', initials: 'RV', area: 'ti', role: 'Tecnología & Sistemas', email: 'rvalde@pullman.cl', phone: '+56984645310', location: 'Casa Matriz', github: null },
+  { id: 'c_aville', name: 'Alejandro Alvaro Villé', initials: 'AV', area: 'ti', role: 'Comunicaciones', email: 'aville@wit.la', phone: '+56932917135', location: 'Casa Matriz', github: null },
+  { id: 'c_dmeza', name: 'Dominique Melissa Meza', initials: 'DM', area: 'ti', role: 'Desarrollo TI', email: 'Domi.meza@duocuc.cl', phone: '+56945884822', location: 'San Borja', github: null },
+  { id: 'c_juribes', name: 'Julyt Ajelet Sahar Uribes', initials: 'JU', area: 'ti', role: 'Tecnología & Sistemas', email: 'juribes@wit.la', phone: '+56935143479', location: 'Casa Matriz', github: null },
+  { id: 'c_aerices', name: 'Ayelem Antonella Erices', initials: 'AE', area: 'ti', role: 'Tecnología TI', email: 'Ericesayelem71@gmail.com', phone: '+56941739810', location: 'San Borja', github: null },
+];
+
 const areasData = [
   {
     id: 'negocios',
     name: 'Negocios',
     color: '#10b981',
-    people: ['Euro Paz', 'Luis Lara', 'Jose Tomas Goicoechea', 'Veronica Ponce de Leon'],
+    position: [-4, 3, 0],
     processes: [
       {
         id: 'p_venta',
         name: 'Prospección y Venta',
         nodes: [
-          { id: 'n1', label: 'Prospección', details: 'Prospección multicanal (Broker, SMM, Email, Scraping, Comerciales).', roles: 'Ejecutivos Comerciales', io: 'Out: Base de Leads' },
-          { id: 'n2', label: 'Calificación', details: 'Calificación de Lead y Detección de Necesidad.', roles: 'Comerciales', io: 'Out: Lead Calificado' },
-          { id: 'n3', label: 'Solicitud Estimación', details: 'Solicitud formal de estimación HH/RRHH a las áreas técnicas.', roles: 'TI, Soporte', io: 'Out: Estimación de Esfuerzo' },
-          { id: 'n4', label: 'Caso de Negocio', details: 'Construcción del Caso de Negocio (Servicio / Capex-Opex / Venta) con Administración.', roles: 'Administración, Negocios', io: 'Out: Business Case' },
-          { id: 'n5', label: 'V°B° Gerencia', details: 'Análisis de viabilidad y V°B° de Gerencia General.', roles: 'Gerencia General', io: 'Out: Aprobación Interna' },
-          { id: 'n6', label: 'Propuesta Comercial', details: 'Generación y presentación de Propuesta al cliente.', roles: 'Comerciales', io: 'Out: Propuesta formal' },
-          { id: 'n7', label: 'Cierre (OC)', details: 'Aceptación del Cliente y Emisión de Orden de Compra (OC).', roles: 'Cliente, Negocios', io: 'Out: Orden de Compra' },
+          { id: 'n1', label: 'Prospección', details: 'Prospección multicanal.', roles: 'Comerciales', io: 'Out: Leads' },
+          { id: 'n2', label: 'Calificación', details: 'Detección de Necesidad.', roles: 'Comerciales', io: 'Out: Lead Calificado' },
+          { id: 'n3', label: 'Estimación TI', details: 'Solicitud formal HH a TI.', roles: 'TI, Soporte', io: 'Out: Estimación' },
+          { id: 'n4', label: 'Caso Negocio', details: 'Construcción con Admin.', roles: 'Admin, Negocios', io: 'Out: Business Case' },
+          { id: 'n5', label: 'Aprobación', details: 'V°B° de Gerencia.', roles: 'Gerencia General', io: 'Out: Aprobación' },
+          { id: 'n6', label: 'Propuesta', details: 'Presentación al cliente.', roles: 'Comerciales', io: 'Out: Propuesta' },
+          { id: 'n7', label: 'Cierre OC', details: 'Emisión de OC.', roles: 'Cliente, Negocios', io: 'Out: OC' },
         ]
       }
     ]
   },
   {
     id: 'proyectos',
-    name: 'Implementación / PMO',
+    name: 'PMO / Implementación',
     color: '#8b5cf6',
-    people: ['Marleen Juarez', 'Roberto Vargas', 'Ricardo Lorca', 'Hector Corredor', 'Catalina Alfaro', 'Angel Muñoz'],
+    position: [0, 3, 0],
     processes: [
       {
         id: 'p_pmo',
         name: 'Ciclo de Proyectos',
         nodes: [
-          { id: 'p1', label: 'Recepción OC', details: 'Recepción de Orden de Compra y designación de PM.', roles: 'PMO, Negocios', io: 'In: OC | Out: PM Asignado' },
-          { id: 'p2', label: 'Kickoff', details: 'Kickoff multidisciplinario (Diseño, Admin, TI, Operaciones).', roles: 'PM, Equipo Completo', io: 'Out: Acta de Reunión' },
-          { id: 'p3', label: 'Req. y Entregables', details: 'Elaboración de Documento de Requerimientos y Entregables.', roles: 'PM, Analista Funcional', io: 'Out: Documento BRD' },
-          { id: 'p4', label: 'Traspaso a TI', details: 'Traspaso formal al ciclo de Desarrollo TI con Carta Gantt.', roles: 'PM, Líder TI', io: 'Out: Gantt, Historias de Usuario' },
-          { id: 'p5', label: 'UAT y Entrega', details: 'Pruebas de Aceptación de Usuario (UAT) y Entrega Final al Cliente.', roles: 'PM, Cliente', io: 'Out: Acta de Conformidad' },
+          { id: 'p1', label: 'Recepción OC', details: 'Recepción y designación PM.', roles: 'PMO', io: 'In: OC' },
+          { id: 'p2', label: 'Kickoff', details: 'Kickoff multidisciplinario.', roles: 'Equipo Completo', io: 'Out: Acta' },
+          { id: 'p3', label: 'BRD', details: 'Requerimientos y Entregables.', roles: 'PM', io: 'Out: BRD' },
+          { id: 'p4', label: 'Traspaso TI', details: 'Traspaso a Desarrollo TI.', roles: 'PM, TI', io: 'Out: Gantt' },
+          { id: 'p5', label: 'Entrega', details: 'UAT y Entrega Final.', roles: 'PM, Cliente', io: 'Out: Conformidad' },
         ]
       }
     ]
   },
   {
     id: 'diseno',
-    name: 'Diseño y Comunicación',
+    name: 'Diseño',
     color: '#ec4899',
-    people: ['Alvaro Tejeda'],
+    position: [4, 3, 0],
     processes: [
       {
         id: 'p_diseno',
-        name: 'Proceso Creativo UI/UX',
+        name: 'Proceso Creativo',
         nodes: [
-          { id: 'c1', label: 'Recepción Necesidad', details: 'Recepción de necesidad de interfaz/marca.', roles: 'Diseñador, PM', io: 'In: Brief' },
-          { id: 'c2', label: 'Investigación / AI', details: 'Investigación de usuarios y arquitectura de información.', roles: 'Diseñador UX', io: 'Out: User Journeys, Wireframes' },
-          { id: 'c3', label: 'Prototipado', details: 'Prototipado en Figma / UI-UX interactivo.', roles: 'Diseñador UI', io: 'Out: Prototipo Figma' },
-          { id: 'c4', label: 'Traspaso Frontend', details: 'Traspaso a Maquetación Frontend en TI.', roles: 'Diseñador, Frontend Dev', io: 'Out: Assets, Specs' },
+          { id: 'c1', label: 'Recepción', details: 'Recepción de necesidad.', roles: 'Diseñador', io: 'In: Brief' },
+          { id: 'c2', label: 'UX/AI', details: 'Investigación de usuarios.', roles: 'Diseñador UX', io: 'Out: Wireframes' },
+          { id: 'c3', label: 'Prototipado', details: 'Prototipado en Figma.', roles: 'Diseñador UI', io: 'Out: Figma' },
+          { id: 'c4', label: 'Frontend', details: 'Maquetación Frontend.', roles: 'Frontend Dev', io: 'Out: Assets' },
         ]
       }
     ]
   },
   {
     id: 'soporte',
-    name: 'Soporte y Continuidad (Flota)',
+    name: 'Soporte',
     color: '#06b6d4',
-    people: ['Mariangly Monsalve', 'Raul Contreras', 'Carolina Levipil', 'Alexandra Morales', 'Anggie Chevez', 'Ignacia Flores', 'Amanda Vidal', 'Mariangeles Yaraure', 'Mariana Lima'],
+    position: [-4, 0, 0],
     processes: [
       {
         id: 'p_soporte',
         name: 'Gestión de Incidencias',
         nodes: [
-          { id: 's1', label: 'Monitoreo', details: 'Monitoreo en tiempo real de telemetría y sensores.', roles: 'Analistas Soporte', io: 'In: Data Telemétrica' },
-          { id: 's2', label: 'Detección', details: 'Detección y clasificación de incidencias / alertas.', roles: 'Soporte L1', io: 'Out: Ticket Creado' },
-          { id: 's3', label: 'Diagnóstico', details: 'Diagnóstico remoto vs despacho a patio/terreno.', roles: 'Soporte L2, Técnicos', io: 'Out: Plan de Acción' },
-          { id: 's4', label: 'Plan Mitigación', details: 'Despliegue escalonado (10% flota inicial -> validación -> 100% flota).', roles: 'Soporte, DevOps', io: 'Out: Actualización / Corrección' },
-          { id: 's5', label: 'Cierre', details: 'Cierre de ticket y actualización de bitácora.', roles: 'Soporte L1', io: 'Out: Ticket Cerrado, RCA' },
+          { id: 's1', label: 'Monitoreo', details: 'Monitoreo de telemetría.', roles: 'Soporte', io: 'In: Data' },
+          { id: 's2', label: 'Detección', details: 'Clasificación de alertas.', roles: 'Soporte L1', io: 'Out: Ticket' },
+          { id: 's3', label: 'Diagnóstico', details: 'Diagnóstico remoto.', roles: 'Soporte L2', io: 'Out: Acción' },
+          { id: 's4', label: 'Mitigación', details: 'Despliegue escalonado.', roles: 'Soporte, DevOps', io: 'Out: Parche' },
+          { id: 's5', label: 'Cierre', details: 'Cierre de ticket.', roles: 'Soporte L1', io: 'Out: Ticket Cerrado' },
         ]
       }
     ]
@@ -87,92 +144,88 @@ const areasData = [
     id: 'id',
     name: 'I+D',
     color: '#f97316',
-    people: ['Diego Wigodski', 'Jesus Sandoval'],
+    position: [0, 0, 0],
     processes: [
       {
         id: 'p_id',
         name: 'Ciclo de Innovación',
         nodes: [
-          { id: 'i1', label: 'Detección', details: 'Detección de oportunidad tecnológica o nuevo hardware.', roles: 'Ing. I+D', io: 'In: Tendencias de Mercado' },
-          { id: 'i2', label: 'Prototipado (POC)', details: 'Prototipado rápido y pruebas de concepto (POC).', roles: 'Ing. I+D, Devs', io: 'Out: POC Funcional' },
-          { id: 'i3', label: 'Validación', details: 'Validación de viabilidad con TI y Negocios.', roles: 'TI, Negocios, I+D', io: 'Out: Informe Viabilidad' },
-          { id: 'i4', label: 'Productización', details: 'Traspaso a ingeniería para desarrollo final a escala.', roles: 'Equipo TI Core', io: 'Out: Specs Técnicas' },
+          { id: 'i1', label: 'Oportunidad', details: 'Detección de oportunidad.', roles: 'I+D', io: 'In: Mercado' },
+          { id: 'i2', label: 'POC', details: 'Prototipado rápido.', roles: 'I+D, Devs', io: 'Out: POC' },
+          { id: 'i3', label: 'Viabilidad', details: 'Validación técnica/negocio.', roles: 'TI, Negocios', io: 'Out: Informe' },
+          { id: 'i4', label: 'Producción', details: 'Desarrollo a escala.', roles: 'TI Core', io: 'Out: Specs' },
         ]
       }
     ]
   },
   {
     id: 'admin',
-    name: 'Administración & Finanzas',
+    name: 'Administración',
     color: '#f59e0b',
-    people: ['Alejandro Gonzalez', 'Pablo Amarista', 'Alba Rodriguez', 'Lixandro Albarran', 'Gonzalo Tejeda', 'Andrea Cisterna', 'Randy Amaya', 'Maria Isabel Carrasco', 'Milibeth Garcia'],
+    position: [4, 0, 0],
     processes: [
       {
         id: 'p_finanzas',
         name: 'Gestión Financiera',
         nodes: [
-          { id: 'a1', label: 'Valorización', details: 'Valorización de costos y cotizaciones de proveedores/hardware.', roles: 'Analista Finanzas', io: 'In: Requerimientos | Out: Presupuesto' },
-          { id: 'a2', label: 'Control Ppto', details: 'Control presupuestario y emisión de contratos.', roles: 'Legal, Admin', io: 'Out: Contratos, Presupuesto Aprobado' },
-          { id: 'a3', label: 'Facturación', details: 'Facturación por hitos cumplidos según avance de proyectos.', roles: 'Facturación, PMO', io: 'Out: Facturas Emitidas' },
+          { id: 'a1', label: 'Valorización', details: 'Cotizaciones de costos.', roles: 'Finanzas', io: 'Out: Presupuesto' },
+          { id: 'a2', label: 'Control Ppto', details: 'Contratos y control.', roles: 'Legal, Admin', io: 'Out: Contrato' },
+          { id: 'a3', label: 'Facturación', details: 'Facturación por hitos.', roles: 'Facturación', io: 'Out: Facturas' },
         ]
       }
     ]
   },
   {
     id: 'ti',
-    name: 'TI (Ingeniería)',
+    name: 'TI Core',
     color: '#3b82f6',
-    people: ['Ivan Valenzuela', 'Dorian Gonzalez', 'Luis Mendez', 'Rodrigo Valdebenito', 'Alejandro Ville', 'Luis Sanchez', 'Dominique Meza', 'Julyt Uribes', 'Ayelem Erices'],
+    position: [0, -3, 0],
     processes: [
       {
         id: 'p_ti_dev',
         name: 'Desarrollo Core',
         nodes: [
-          { id: 't1', label: 'Sprint Dev', details: 'Planificación de Sprint y codificación (Backend/Frontend).', roles: 'Devs, Scrum Master', io: 'In: Backlog | Out: Código' },
-          { id: 't2', label: 'QA Testing', details: 'Pruebas automatizadas y manuales de calidad.', roles: 'QA Engineer', io: 'Out: Reporte QA' },
-          { id: 't3', label: 'Deploy', details: 'Despliegue a Producción (CI/CD).', roles: 'DevOps', io: 'Out: Feature en Producción' },
+          { id: 't1', label: 'Sprint Dev', details: 'Planificación y código.', roles: 'Devs', io: 'Out: Código' },
+          { id: 't2', label: 'QA Testing', details: 'Pruebas automatizadas.', roles: 'QA', io: 'Out: QA Report' },
+          { id: 't3', label: 'Deploy', details: 'Despliegue a Prod.', roles: 'DevOps', io: 'Out: Release' },
         ]
       },
       {
         id: 'p_ti_cambio',
         name: 'Solicitud Cambio / Hotfix',
         nodes: [
-          { id: 'th1', label: 'Recepción RFC', details: 'Ingreso de Request For Change o Hotfix urgente.', roles: 'PM, Soporte', io: 'In: RFC' },
-          { id: 'th2', label: 'War Room (si aplica)', details: 'Gestión de incidente severo en equipo (War Room).', roles: 'Infra, Dev Core', io: 'Out: Solución Rápida' },
-          { id: 'th3', label: 'Deploy & RCA', details: 'Despliegue del Hotfix y elaboración de Root Cause Analysis.', roles: 'DevOps, Arquitectura', io: 'Out: RCA, Parche Prod' },
-        ]
-      },
-      {
-        id: 'p_ti_bi',
-        name: 'Business Intelligence',
-        nodes: [
-          { id: 'b1', label: 'Extracción (ETL)', details: 'Extracción, Transformación y Carga de datos crudos.', roles: 'Data Engineer', io: 'In: BDs Crudas' },
-          { id: 'b2', label: 'Data Marts', details: 'Estructuración en modelos dimensionales analíticos.', roles: 'Data Architect', io: 'Out: Data Marts' },
-          { id: 'b3', label: 'Dashboards', details: 'Construcción y publicación de tableros de BI.', roles: 'Data Analyst', io: 'Out: Dashboard' },
+          { id: 'th1', label: 'RFC', details: 'Ingreso Request Change.', roles: 'PM', io: 'In: RFC' },
+          { id: 'th2', label: 'War Room', details: 'Gestión de incidente.', roles: 'Infra, Dev', io: 'Out: Hotfix' },
+          { id: 'th3', label: 'RCA', details: 'Despliegue y RCA.', roles: 'DevOps', io: 'Out: RCA' },
         ]
       }
     ]
   },
 ];
 
-const teamOrbiters = [
-  { id: 't1', name: 'Dorian Gonzalez', github: 'dorian-cesar', role: 'Lidera arquitectura y aprueba pases a Prod.', targetNode: 'ti', orbitRadius: 2.5, speed: 0.5, yOffset: 1, color: '#10b981' },
-  { id: 't2', name: 'Diego Wigodski', github: 'diegowigo', role: 'I+D y Nuevas Herramientas', targetNode: 'id', orbitRadius: 2.2, speed: 0.4, yOffset: -1.5, color: '#f59e0b' },
-  { id: 't3', name: 'Diego Farias', github: 'D1Farias', role: 'Integración y Despliegue', targetNode: 'ti', orbitRadius: 2.7, speed: 0.6, yOffset: 0.5, color: '#3b82f6' },
-  { id: 't4', name: 'Luis Sanchez', github: 'HLCXPL', role: 'Infraestructura', targetNode: 'ti', orbitRadius: 2.3, speed: 0.45, yOffset: -0.5, color: '#8b5cf6' },
-];
+// Calculate deterministic orbits for all collaborators
+const teamOrbiters = allCollaborators.map((c) => {
+  const targetArea = areasData.find(a => a.id === c.area);
+  const areaCollaborators = allCollaborators.filter(col => col.area === c.area);
+  const idx = areaCollaborators.findIndex(col => col.id === c.id);
+  const total = areaCollaborators.length;
+  
+  const initialAngle = (idx / total) * Math.PI * 2;
+  const radius = 1.0 + (idx % 4) * 0.45;
+  const speed = 0.15 + (idx % 3) * 0.1;
+  const yOffset = Math.sin((idx / total) * Math.PI * 2) * 1.5;
 
-const macroNodes = [
-  { id: 'negocios', label: 'Negocios', position: [-4, 3, 0], color: '#10b981' },
-  { id: 'proyectos', label: 'Implementación', position: [0, 3, 0], color: '#8b5cf6' },
-  { id: 'diseno', label: 'Diseño', position: [4, 3, 0], color: '#ec4899' },
-  { id: 'soporte', label: 'Soporte', position: [-4, 0, 0], color: '#06b6d4' },
-  { id: 'id', label: 'I+D', position: [0, 0, 0], color: '#f97316' },
-  { id: 'admin', label: 'Admin & Finanzas', position: [4, 0, 0], color: '#f59e0b' },
-  { id: 'ti', label: 'TI Core', position: [0, -3, 0], color: '#3b82f6' },
-];
+  return {
+    ...c,
+    targetNode: c.area,
+    color: targetArea?.color || '#cbd5e1',
+    initialAngle,
+    orbitRadius: radius,
+    speed,
+    yOffset
+  };
+});
 
-// Draw some general macro connections
 const macroConnections = [
   { start: 'negocios', end: 'proyectos', control: [-2, 3.5, 0] },
   { start: 'proyectos', end: 'ti', control: [2, 0, -1] },
@@ -185,23 +238,19 @@ const macroConnections = [
 // --- COMPONENTS ---
 function TeamMember({ member, isVisible }) {
   const meshRef = useRef();
-  const materialRef = useRef();
   const [hovered, setHovered] = useState(false);
-  const target = macroNodes.find(n => n.id === member.targetNode);
+  const target = areasData.find(n => n.id === member.targetNode);
 
   useFrame((state) => {
     if (!isVisible) return;
     if (meshRef.current && target) {
-      const time = state.clock.elapsedTime * member.speed + (member.orbitRadius * 10);
+      const time = (state.clock.elapsedTime * member.speed) + member.initialAngle;
       const x = target.position[0] + Math.cos(time) * member.orbitRadius;
       const z = target.position[2] + Math.sin(time) * member.orbitRadius;
-      const y = target.position[1] + member.yOffset + Math.sin(state.clock.elapsedTime * 2) * 0.1;
+      const y = target.position[1] + member.yOffset + Math.sin(state.clock.elapsedTime * 1.5 + member.initialAngle) * 0.2;
       
       meshRef.current.position.lerp(new THREE.Vector3(x, y, z), 0.1);
       meshRef.current.quaternion.copy(state.camera.quaternion);
-    }
-    if (materialRef.current) {
-      materialRef.current.opacity = THREE.MathUtils.lerp(materialRef.current.opacity, isVisible ? (hovered ? 0.9 : 0.6) : 0, 0.05);
     }
   });
 
@@ -209,41 +258,58 @@ function TeamMember({ member, isVisible }) {
 
   return (
     <group ref={meshRef}>
-      <mesh
-        onPointerOver={() => { setHovered(true); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={() => { setHovered(false); document.body.style.cursor = 'default'; }}
-      >
-        <planeGeometry args={[1, 0.4]} />
-        <meshStandardMaterial 
-          ref={materialRef}
-          color={member.color} 
-          transparent
-          side={THREE.DoubleSide}
-          emissive={member.color}
-          emissiveIntensity={hovered ? 0.6 : 0.2}
-        />
-      </mesh>
-      
-      <Html position={[0, 0, 0]} center style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s', pointerEvents: hovered ? 'auto' : 'none' }} zIndexRange={[100, 0]}>
+      <Html position={[0, 0, 0]} center style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s', pointerEvents: isVisible ? 'auto' : 'none', zIndex: hovered ? 100 : 1 }}>
         <div 
-          className={`flex flex-col p-2 rounded-lg backdrop-blur-md shadow-lg border border-white/20 transition-all ${hovered ? 'scale-110 bg-white/95' : 'scale-100 bg-white/70'}`}
-          style={{ width: hovered ? '220px' : '140px' }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className={`relative group cursor-pointer`}
         >
-          <div className="flex items-center gap-2">
-            <div className="bg-slate-800 text-white rounded-full p-1"><User size={12} /></div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-slate-800 leading-tight">{member.name}</span>
-              {hovered && (
-                <div className="flex items-center text-xs text-slate-500 gap-1 mt-0.5">
-                  <Code size={10} /> @{member.github}
-                </div>
-              )}
-            </div>
+          {/* Avatar Badge */}
+          <div 
+            className={`w-7 h-7 rounded-full shadow-md flex items-center justify-center font-bold text-[10px] transition-all duration-300 border 
+              ${hovered ? 'scale-125 text-white shadow-xl' : 'text-slate-700 hover:scale-110'}`}
+            style={{ 
+              backgroundColor: hovered ? member.color : '#ffffff',
+              borderColor: member.color 
+            }}
+          >
+            {member.initials}
           </div>
+
+          {/* Expanded Modal */}
           {hovered && (
-            <p className="text-[10px] text-slate-600 mt-2 font-medium leading-tight border-t border-slate-200 pt-1">
-              {member.role}
-            </p>
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-64 bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-2xl p-4 animate-fade-in pointer-events-none">
+              <div className="flex items-start gap-3 border-b border-slate-100 pb-3 mb-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0 shadow-inner" style={{ backgroundColor: member.color }}>
+                  {member.initials}
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm leading-tight">{member.name}</h3>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1" style={{ color: member.color }}>{member.role}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <Mail size={12} className="text-slate-400" />
+                  <span>{member.email}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone size={12} className="text-slate-400" />
+                  <span>{member.phone}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin size={12} className="text-slate-400" />
+                  <span>{member.location}</span>
+                </div>
+                {member.github && (
+                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-slate-100">
+                    <Code size={12} className="text-slate-400" />
+                    <span className="font-semibold text-slate-700">@{member.github}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
       </Html>
@@ -276,7 +342,7 @@ function Connections({ connections, nodes, color, isVisible }) {
   );
 }
 
-function NodeMesh({ position, color, isVisible, label, onClick, scale = 1, showLabel = true, yOffset = 0, hoverable = true, emissive = true }) {
+function NodeMesh({ position, color, isVisible, label, scale = 1, showLabel = true, yOffset = 0, hoverable = true, onClick }) {
   const meshRef = useRef();
   const materialRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -307,13 +373,13 @@ function NodeMesh({ position, color, isVisible, label, onClick, scale = 1, showL
           color={color} 
           roughness={0.2}
           metalness={0.1}
-          emissive={emissive ? color : '#000'}
+          emissive={color}
           transparent
         />
       </mesh>
       {showLabel && (
         <Html position={[0, -0.8 * scale, 0]} center style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s', pointerEvents: 'none' }}>
-          <div className="text-sm font-semibold text-slate-700 bg-white/80 px-2 py-1 rounded shadow-sm backdrop-blur-sm whitespace-nowrap border border-white/50">
+          <div className="text-sm font-bold text-slate-700 bg-white/90 px-3 py-1 rounded shadow-sm backdrop-blur-sm whitespace-nowrap border border-white/50">
             {label}
           </div>
         </Html>
@@ -326,7 +392,6 @@ function ProcessFlow({ process, color, isVisible, activeNodeId, setActiveNodeId 
   if (!process) return null;
   
   const nodes = process.nodes.map((n, i) => {
-    // Layout in a straight line or slight curve
     const xPos = (i - process.nodes.length / 2) * 2.5 + 1.25;
     return {
       ...n,
@@ -368,9 +433,9 @@ function ProcessFlow({ process, color, isVisible, activeNodeId, setActiveNodeId 
                     <CheckCircle size={16} style={{ color: n.color }} />
                     <h4 className="font-bold text-slate-800 text-sm leading-tight">{n.label}</h4>
                   </div>
-                  <p className="text-sm text-slate-600 mb-3">{n.details}</p>
+                  <p className="text-sm text-slate-600 mb-3 font-medium">{n.details}</p>
                   
-                  <div className="bg-slate-50 p-2 rounded text-xs space-y-1">
+                  <div className="bg-slate-50 p-2 rounded text-xs space-y-1 border border-slate-100">
                     <div className="flex items-start gap-1.5">
                       <Users size={12} className="text-slate-400 mt-0.5" />
                       <span className="text-slate-700"><strong>Rol:</strong> {n.roles}</span>
@@ -409,8 +474,8 @@ export default function App() {
       {/* SIDEBAR */}
       <div className="w-80 h-full bg-white shadow-2xl z-20 flex flex-col border-r border-slate-200">
         <div className="p-6 border-b border-slate-100 bg-slate-50/80 backdrop-blur">
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight leading-tight">Mapeo de Procesos Core</h1>
-          <p className="text-xs text-slate-500 mt-2 font-medium">Seleccione un área para explorar su flujo de trabajo completo.</p>
+          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight leading-tight">Mapa Corporativo 3D</h1>
+          <p className="text-xs text-slate-500 mt-2 font-medium">Seleccione un área para explorar su flujo de procesos.</p>
         </div>
         
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -429,25 +494,6 @@ export default function App() {
                   </div>
                   {isSelected ? <ChevronLeft size={16} className="text-slate-400" /> : <ArrowRight size={16} className="text-slate-300" />}
                 </button>
-                
-                {/* Expandable People List */}
-                <div 
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${isSelected ? 'max-h-[500px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
-                >
-                  <div className="bg-slate-50/50 border border-slate-100 rounded-lg p-3 mx-2 shadow-inner">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-2 px-1 tracking-widest flex items-center gap-1">
-                      <Users size={10} /> Integrantes del Equipo
-                    </p>
-                    <div className="space-y-0.5">
-                      {area.people.map((person, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-2 py-1.5 hover:bg-white rounded-md transition-colors text-xs font-medium text-slate-600 shadow-sm border border-transparent hover:border-slate-100">
-                          <User size={12} className="text-slate-400" />
-                          {person}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
               </div>
             );
           })}
@@ -457,9 +503,9 @@ export default function App() {
       {/* 3D CANVAS AREA */}
       <div className="flex-1 relative">
         <div className="absolute top-8 left-8 z-10 pointer-events-none">
-          <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Portal Corporativo 3D</h2>
+          <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Directorio y Procesos</h2>
           <p className="text-slate-600 mt-1 font-medium bg-white/50 backdrop-blur px-3 py-1 rounded-full inline-block border border-white/50">
-            {selectedArea ? `${selectedArea.name} > ${currentProcess?.name}` : 'Vista Global de Operaciones'}
+            {selectedArea ? `${selectedArea.name} > ${currentProcess?.name}` : 'Vista Global: Pase el cursor sobre las iniciales para ver el perfil.'}
           </p>
         </div>
 
@@ -487,31 +533,22 @@ export default function App() {
           </button>
         )}
 
-        {/* INSTRUCTIONS OVERLAY */}
-        {selectedArea && (
-           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none bg-white/90 backdrop-blur px-6 py-3 rounded-2xl shadow-xl border border-slate-200 animate-fade-in text-center">
-             <p className="text-sm text-slate-800 font-bold">
-               🖱️ Haga clic en los nodos esféricos para ver los detalles del paso.
-             </p>
-           </div>
-        )}
-
-        <Canvas camera={{ position: [0, 0, 15], fov: 45 }}>
+        <Canvas camera={{ position: [0, 0, 16], fov: 45 }}>
           <color attach="background" args={['#f8fafc']} />
           <ambientLight intensity={0.7} />
           <directionalLight position={[10, 10, 5]} intensity={1.5} castShadow />
           <pointLight position={[-10, -10, -10]} intensity={0.5} />
           <Environment preset="city" />
 
-          {/* MACRO VIEW */}
+          {/* MACRO VIEW (Nodes + All Collaborators) */}
           <group visible={!selectedArea}>
-            <Connections connections={macroConnections} nodes={macroNodes} color="#cbd5e1" isVisible={!selectedArea} />
-            {macroNodes.map((node) => (
+            <Connections connections={macroConnections} nodes={areasData} color="#cbd5e1" isVisible={!selectedArea} />
+            {areasData.map((node) => (
               <NodeMesh
                 key={node.id}
                 position={node.position}
                 color={node.color}
-                label={node.label}
+                label={node.name}
                 isVisible={!selectedArea}
                 hoverable={false}
               />
@@ -532,7 +569,7 @@ export default function App() {
             />
           )}
 
-          <ContactShadows position={[0, -4, 0]} opacity={0.4} scale={30} blur={2.5} far={4.5} color="#94a3b8" />
+          <ContactShadows position={[0, -5, 0]} opacity={0.4} scale={30} blur={2.5} far={4.5} color="#94a3b8" />
           
           <OrbitControls 
             enablePan={true}
