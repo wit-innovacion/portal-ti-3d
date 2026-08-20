@@ -355,6 +355,17 @@ function TeamMember({ member, isVisible }) {
             >
               {member.initials}
             </div>
+            
+            {member.rank === 'ceo' && !hovered && (
+               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-900 text-[8px] font-black px-1.5 py-0.5 rounded shadow whitespace-nowrap border border-amber-300">
+                 CEO
+               </div>
+            )}
+            {member.rank === 'gerente' && !hovered && (
+               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 text-slate-100 text-[8px] font-bold px-1.5 py-0.5 rounded shadow whitespace-nowrap border border-slate-500">
+                 GERENTE
+               </div>
+            )}
           </div>
 
           {/* Expanded Modal */}
